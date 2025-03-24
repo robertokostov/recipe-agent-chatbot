@@ -11,6 +11,8 @@ A personalized recipe recommendation and adaptation system built with LangChain,
 - 📊 Vector-based recipe search for semantic matching
 - 🖥️ Simple web interface built with Gradio
 
+da
+
 ## Project Structure
 
 ```
@@ -35,23 +37,27 @@ recipe-agent/
 ### Setup
 
 1. Clone this repository:
+
    ```
    git clone https://github.com/yourusername/recipe-agent.git
    cd recipe-agent
    ```
 
 2. Set up a virtual environment (optional but recommended):
+
    ```
    python -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
 3. Install dependencies:
+
    ```
    pip install -r requirements.txt
    ```
 
 4. Create a `.env` file with your HuggingFace API token:
+
    ```
    HUGGINGFACEHUB_API_TOKEN=your_token_here
    ```
@@ -76,6 +82,7 @@ The Gradio interface will be available at `http://localhost:7860`.
 To run using Docker:
 
 1. Build and start the container:
+
    ```
    docker-compose up -d
    ```
@@ -87,6 +94,7 @@ To run using Docker:
 ### Using Your Own Recipe Data
 
 1. Prepare a CSV file with the following columns:
+
    - name: Recipe name
    - cuisine: Cuisine type
    - diet_types: Comma-separated diet categories
