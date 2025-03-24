@@ -1,0 +1,41 @@
+version: "3.8"
+
+services:
+  recipe-agent:
+    build:
+      context: .
+      dockerfile: Dockerfile # Assumes you are using the corrected Dockerfile (Python 3.12, CMD main.py, etc.)
+    ports:
+      - "7860:7860" # Standard Gradio port mapping - OK
+    volumes:
+      # 1. Data Volume - Check Necessity:
+      # Does your app NEED to read/write from/to a specific '/app/data' directory?
+      # Currently, it loads from HF Hub and saves recipes_data.csv to /app.
+      # This mount might be unnecessary unless you configure HF datasets cache here
+      # or read local data from './data'. Consider removing if not specifically needed.
+      - ./data:/app/data
+
+      # 2. ChromaDB Volume - Remove:
+      # Your app uses an *in-memory* ChromaDB (doesn't save to disk).
+      # Mounting a volume to '/app/chroma_db' doesn't align with the current code
+      # and the directory creation was removed from the Dockerfile. Remove this line.
+      # If you *later* implement persistence in recipe_system.py using VECTOR_DB_PATH="./recipe_vectordb",
+      # you would mount that specific path instead: e.g., - ./recipe_vectordb:/app/recipe_vectordb
+      # - ./chroma_db:/app/chroma_db # <-- REMOVE THIS LINE
+
+    environment:
+      # 3. MISSING Google API Key:
+      # Your application requires the GOOGLE_API_KEY for Gemini. Add it here.
+      # This assumes the key is available as an environment variable on the machine running 'docker-compose up'
+      # or in a .env file read by docker-compose itself.
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY} # <-- ADD THIS LINE
+
+      # 4. Hugging Face Token - Optional:
+      # This might not be strictly needed by your current code (datasets often uses cache,
+      # embedding model is public). Keep if needed for private models/datasets later.
+      - HUGGINGFACEHUB_API_TOKEN=${HUGGINGFACEHUB_API_TOKEN}
+
+      # These are standard Python env vars for Docker - OK
+      - PYTHONDONTWRITEBYTECODE=1
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped # Standard restart policy - OK
