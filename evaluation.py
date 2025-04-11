@@ -10,30 +10,19 @@ from sklearn.metrics import (
     classification_report,
     precision_recall_fscore_support
 )
-import pandas as pd # Optional: if loading data from file
+import pandas as pd
 
-# --- Configuration ---
-# Option 1: Hardcode your Space ID/URL
-# SPACE_ID = "your-username/your-space-name"
-# Option 2: Get from environment variable (useful if running script ON the space or elsewhere with env set)
-SPACE_ID = "rkostov/thesis-agent" # Add a default placeholder
-# Option 3: Use full URL if needed
-# SPACE_URL = "https://your-username-your-space-name.hf.space"
+SPACE_ID = "rkostov/thesis-agent"
 
-API_NAME = "/respond" # From view_api output
-NUM_RESULTS = 3 # Default value for the slider input
-SLEEP_BETWEEN_CALLS = 1 # Seconds to wait to avoid rate limiting
+API_NAME = "/respond"
+NUM_RESULTS = 3
+SLEEP_BETWEEN_CALLS = 1 
 
 # --- Logging Setup ---
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger('evaluation_script')
 
-# --- Benchmark Dataset ---
-# Full list of ~100 queries with intended routing targets
-# You can modify/expand this list or load from a file (CSV/JSON)
 benchmark_data = [
-    # === RAG - Specific Questions ===
-    # Ingredients & Quantities
     {'query': 'Does spaghetti carbonara use cream?', 'intended_target': 'RAG'},
     {'query': 'What kind of cheese is in the Greek Salad recipe?', 'intended_target': 'RAG'},
     {'query': 'Is there onion in the banana bread?', 'intended_target': 'RAG'},
@@ -147,18 +136,16 @@ benchmark_data = [
     {'query': 'Can you find a low-sugar banana bread?', 'intended_target': 'TEXT_SEARCH'},
     {'query': 'What are some salads with cucumber?', 'intended_target': 'TEXT_SEARCH'},
     {'query': 'Talk me through the carbonara recipe', 'intended_target': 'RAG'},
-    {'query': 'Nutritional info for cookies', 'intended_target': 'RAG'}, # RAG likely to fail gracefully
-    {'query': 'Compare carbonara and stir fry', 'intended_target': 'RAG'}, # RAG likely to fail gracefully
+    {'query': 'Nutritional info for cookies', 'intended_target': 'RAG'},
+    {'query': 'Compare carbonara and stir fry', 'intended_target': 'RAG'},
 
     # === Edge Cases ===
-    {'query': 'choclate chip cookis', 'intended_target': 'TEXT_SEARCH'}, # Misspelling
-    {'query': 'soup', 'intended_target': 'TEXT_SEARCH'}, # Broad
-    {'query': 'Does any recipe use saffron?', 'intended_target': 'RAG'}, # Likely Out of Scope Ingredient
-    {'query': 'asdfghjkl', 'intended_target': 'TEXT_SEARCH'}, # Nonsense
-    {'query': 'tell me a joke about cooking', 'intended_target': 'RAG'} # Out of scope Topic
+    {'query': 'choclate chip cookis', 'intended_target': 'TEXT_SEARCH'},
+    {'query': 'soup', 'intended_target': 'TEXT_SEARCH'}, 
+    {'query': 'Does any recipe use saffron?', 'intended_target': 'RAG'}, 
+    {'query': 'asdfghjkl', 'intended_target': 'TEXT_SEARCH'},
+    {'query': 'tell me a joke about cooking', 'intended_target': 'RAG'} 
 ]
-# --- End Benchmark Dataset ---
-
 
 # --- Helper function to extract routing decision ---
 def extract_routing_decision(response_content):
